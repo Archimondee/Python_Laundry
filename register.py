@@ -1,6 +1,8 @@
 from mysql.connector import MySQLConnection, Error
 from iniConfig import bacaConfig
-
+import re
+import menuAdmin
+import getpass
 def cekNama(user):
     try:
         dbConfig = bacaConfig()
@@ -38,20 +40,24 @@ def cekNama(user):
     except Error as e:
         print (e)
 def registNama():
-    user = raw_input("Masukan nama :")
-    cekNama(user)
-    
+    user = raw_input("Masukan username :")
+    if re.match('^[A-Za-z]*$',user):
+        cekNama(user)
+    else:
+        print 'Tidak dapat menggunakan angka'
+        registNama()
 
 def dataDiri(user):
-    pswd = raw_input("Masukan passwod : ")
+    pswd = getpass.getpass('Masukan password : ',stream = None)
+
     akses = "Anggota"
     alamat = raw_input("Masukan alamat valid : ")
-    hp = raw_input("Masukan nomor hp valid : ")
+    hp = input("Masukan nomor hp valid : ")    
     email = raw_input("Masukan email valid : ")
-
-    query = "INSERT INTO user (user,pswd,akses,alamat,hp,email)"\
-            "VALUES (%s,%s,%s,%s,%s,%s)"
-    args = (user,pswd,akses,alamat,hp,email)
+    saldo = 10000
+    query = "INSERT INTO user (user,pswd,akses,saldo,alamat,hp,email)"\
+            "VALUES (%s,%s,%s,%s,%s,%s,%s)"
+    args = (user,pswd,akses,saldo,alamat,hp,email)
 
     try:
         dbConfig = bacaConfig()
@@ -74,3 +80,6 @@ def dataDiri(user):
     finally:
         cursor.close()
         conn.close
+
+if __name__ == '__main__':
+    registNama()
